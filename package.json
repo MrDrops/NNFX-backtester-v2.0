@@ -1,0 +1,24 @@
+{
+  "name": "nnfx_backtester_v2.0",
+  "version": "1.0.0",
+  "description": "automated manual backtester for nnfx strategies",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nnfx",
+    "manual",
+    "backtester"
+  ],
+  "author": "DropsV",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql2": "^2.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
+}
