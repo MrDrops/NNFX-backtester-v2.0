@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NNFX Manual Backtester</title>
+</head>
+<body>
+    <form method="POST" action="/meta-form" id="metaTradeForm">
+        <!-- 
+            - metadata
+                pairName                    string[6 letters]
+                Period start                number[yyyymmdd]
+                Period end                  number[yyyymmdd]
+            - indicators and input values:
+                entry indi                  string
+                Baseline indi               string
+                exit indi                   string
+                volume indi                 string
+                confirmation2 indi          string
+                entry params                array[values: params required by indi]
+                baselines params            array[values: params required by indi]
+                exit params                 array[values: params required by indi]
+                volume params               array[values: params required by indi]
+                confirmation 2 params       array[values: params required by indi]
+
+            Total:  3 metadata inputs
+                    5 indicator inputs
+                    5 indi params inputs
+
+            Output: 13-element array
+            [str, num, num, str, str, str, str, str, arr, arr, arr, arr, arr]
+            all metadata inputs are NOT NULL
+            only entry indi and entry params are NOT NULL
+            meaning if other value is left empty a value has to be agreed on as 
+            placeholder (null, -1, ?) before sending to sever
+        -->
+
+        <!-- Mock return values-->
+        <input type="text" id="meta-mock-data" size="70" placeholder="an array" value="audusd, 20200101, 20210101, entryIndi, blineIndi, exitIndi, volIndi, c2Indi, entryParam, blP, exP, volP, c2P">
+        <button id="submitMetaBtn" type="button" onclick="startTestBtn()"> Submit meta</button>
+    </form>
+    <form method="POST" action="/trade-form" id="tradeForm">
+        <!--
+            - trade input data
+                date(of entry)              number[yyyymmdd]
+                Entry Price                 number[price]
+                Long/Short (direction)      str['long'/'short']
+                ATR(14)                     number[0.XXX]
+                exit date                   number[yyyymmdd]
+                exit price                  number[price]
+
+            Total: 6-element array
+            [num, num, str, num, num, num]
+            all array elements are NOT NULL
+        -->
+
+        <!-- Mock return values-->
+        <input type="text" id="trade-mock-data" size="45" placeholder="an array" value="20200110, 0.73000, long, 0.00777, 20200202, 0.73200">
+        <button id="submitTradeBtn" type="button" onclick="startTradeBtn()"> Submit trade</button>
+
+    </form>
+    <script src="index_script.js" defer></script>
+</body>
+</html>
+
+<!--
+    WHOLE APP IDEA:
+    The idea is to make manual testing easier and more objective with the goal to
+    decide if the indicators tested are worth further scrutiny.
+    The process is based on the following rules:
+    default take-profit = 1ATR
+    default stop-loss = 1.5ATR
+    win = hit tp before sl
+    partial win = no hit tp but exit before sl hit
+    loss = hit sl before tp or exit indi
+
+    html 'live' table will show only trade inputs for test feedback, no calculations
+    results preview will only give win & total. rest will be in results page
+    results will be analyzed in terms of % win, loss, partial, total
+    instead of projected profit of account balance
+-->

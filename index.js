@@ -12,23 +12,18 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 app.post('/meta-form', (req, res)=> {
     const metaFormData = req.body;
-    dbquery.testing();
-    dbquery.getPair().then(dbres=> console.log(dbres));
+    //dbquery.testing();
+    //dbquery.getPair().then(dbres=> console.log(dbres));
     console.log(metaFormData);
-    res.status(200).json('data through meta-form post in index.js');
-    //data goes subject to validation
-    // dbquery.getPair().then((pair) => {
-    //     console.log(pair);
-    //     console.log(metaFormData);
-    //     res.status(200).json('data through meta-form post in index.js');
-    // });
+    console.log('meta server check')
+    res.status(200).end();
 });
 
 app.post('/trade-form', (req, res)=> {
     const tradeFormData = req.body;
-
     console.log(tradeFormData);
-    res.status(200).json('data through trade-form post in index.js');
+    console.log('data server check')
+    res.status(200).end();
 });
 
 app.listen(PORT);
