@@ -39,70 +39,6 @@ function ajaf(method, url, data={}) {
     });
 };
 
-//START OF PROVISIONAL CODE FOR MOCK INDEX PAGE
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-function startTestBtn() {
-    try {
-        const inData = document.getElementById('meta-mock-data').value;
-        const metaFormData = mockToOb(inData);
-        console.log(metaFormData);
-        ajaf('POST', '/meta-form', metaFormData);
-    } catch(e) {
-        console.log('error in startTestBtn ' + e.message);
-    };
-}
-
-//provisional mock data
-function mockToOb(mockData) {
-    const anArr = mockData.split(', ');
-    const usefulData = {
-        pairName : anArr[0],
-        pStart : anArr[1],
-        pEnd : anArr[2],
-        c1Indi : anArr[3],
-        blineIndi : anArr[4],
-        exitIndi : anArr[5],
-        volIndi : anArr[6],
-        c2Indi : anArr[7],
-        c1Params : anArr[8],
-        blineParams : anArr[9],
-        c2Params : anArr[10],
-        exitParams : anArr[11],
-        volParams : anArr[12],
-    }
-    return usefulData;
-}
-
-//submitTradeBtn() {}
-function startTradeBtn() {
-    try {
-        const inData = document.getElementById('trade-mock-data').value;
-        const tradeFormData = tradeMockObj(inData);
-        console.log(tradeFormData);
-        ajaf('POST', '/trade-form', tradeFormData);
-    } catch(e) {
-        console.log('error in startTradeBtn ' + e.message);
-    };
-}
-
-//provisional mock data
-function tradeMockObj(mockTrade) {
-    const anArr = mockTrade.split(', ');
-    const usefulTradeData = {
-        inDate : anArr[0],
-        inPrice : anArr[1],
-        longShort : anArr[2],
-        atr: anArr[3],
-        extDate : anArr[4],
-        extPrice : anArr[5]
-    };
-    return usefulTradeData;
-}
-
-// END OF PROVISIONAL CODE
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 function submitMetaBtn() {
     const metaData = {
         pairName: document.getElementById('pair-name-input').value,
@@ -155,21 +91,35 @@ function submitTradeBtn() {
         console.log('submitTradeDataBtn');
         createTableRow(tradeData);
         ajaf('POST', '/trade-form', tradeData);
+        tradeData.entryPrice = parseFloat(tradeData.entryPrice);
+        tradeData.atr = parseFloat(tradeData.atr);
+        tradeData.exitPrice = parseFloat(tradeData.exitPrice);
+        quickResults(tradeData);
         document.getElementById('trade-form').reset();
         document.getElementById('entry-date-input').focus();
     };
 }
 
 function instructionsBtn() {
-    console.log('instructions button');
+    let instrWindow;
+    const features = 'width=400, height=400, top=100';
+    instrWindow = window.open('/instructions.html', 'instrWindow', features);
 }
 
 function resultsBtn() {
-    console.log('warning popup. go to results?');
+    const gotoResults = window.confirm('Finish test and go to results page?\n' +
+    'Please ensure all test data is input and test is finished before continuing');
+    if(gotoResults) {
+        window.open('/results.html', '_self');
+    }
 }
 
 function endClearSubmitBtn() {
-    console.log('warning popup. end current test y clear form?');
+    const endTest = window.confirm('Please ensure all test data is input.\n' +
+    'Finish test and reset form?');
+    if(endTest) {
+        location.reload();
+    }
 }
 
 function validateDates(inDate) {
@@ -302,3 +252,37 @@ function populateSltp() {
     }
 }
 
+function quickResults(tradeData) {
+    let currAccount = parseFloat(document.getElementById('hidden-account').value);
+    let currDrawdown = parseFloat(document.getElementById('hidden-drawdown').value);
+    let maxDrawdown = parseFloat(document.getElementById('drawdown-span').innerHTML)
+    const [sl, tp] = sltp(tradeData);
+    let riskPerTrade = currAccount * 0.01;
+    let outcome;
+    if(tradeData.longShort == 'long') {
+        outcome = tradeData.exitPrice - tradeData.entryPrice;
+    } else {
+        outcome = tradeData.entryPrice - tradeData.exitPrice;
+    }
+    let profit = outcome > 0 ? true : false;
+    let toPerc = Math.abs(outcome) / sl;
+    console.log(profit);
+    if(profit) {
+        currAccount = currAccount + toPerc;
+        console.log([currAccount, currDrawdown]);
+    } else {
+        currAccount = currAccount - toPerc;
+        currDrawdown = currDrawdown + toPerc;
+        console.log([currAccount, currDrawdown]);
+        if(currDrawdown > maxDrawdown) {
+            maxDrawdown = currDrawdown; //everything is working but the profit/drawdown quick results are not renewing
+        }
+    }
+    
+
+    console.log('account');
+    console.log(tradeData.entryPrice);
+    console.log(currDrawdown);
+    console.log(riskPerTrade);
+    console.log(typeof(tradeData.entryPrice));
+}
