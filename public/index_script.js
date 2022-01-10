@@ -40,6 +40,12 @@ function ajaf(method, url, data={}) {
 };
 
 function submitMetaBtn() {
+    /*
+    Takes metadata from form, passes it through validation and sends to server
+    using ajaf function
+    in: nothing
+    return: nothing
+    */
     const metaData = {
         pairName: document.getElementById('pair-name-input').value,
         startDate: document.getElementById('period-start-date-input').value,
@@ -56,7 +62,7 @@ function submitMetaBtn() {
         c2Param: document.getElementById('c2-params-input').value,
     };
     let flag = validateMeta(metaData);
-    console.log(flag + 'flag');
+    //console.log(flag + 'flag');
     if(flag) {
         console.log('check input');
         //pop up saying to check input values
@@ -68,12 +74,26 @@ function submitMetaBtn() {
 }
 
 function blockMeta() {
+    /*
+    blocks meta form input once submitted, unblocks trade form and focuses cursor on
+    start of begin form
+    in: nothing
+    return: nothing
+    */
     document.getElementById('meta-input-field-lock').setAttribute('disabled', 'disabled');
     document.getElementById('trade-input-field-lock').removeAttribute('disabled');
     document.getElementById('entry-date-input').focus();
 }
 
 function submitTradeBtn() {
+    /*
+    takes trade data from form, passes it through validation and if validated, sends to server
+    with ajaf function
+    in: nothing
+    return: nothing
+    effect: Either gets a console.log error or submits trade data and clears
+    trade form to start a new entry
+    */
     const tradeData = {
         entryDate: document.getElementById('entry-date-input').value,
         entryPrice: document.getElementById('entry-price-input').value,
@@ -89,24 +109,46 @@ function submitTradeBtn() {
         // pop up saying to check input
     } else {
         console.log('submitTradeDataBtn');
-        createTableRow(tradeData);
-        ajaf('POST', '/trade-form', tradeData);
-        tradeData.entryPrice = parseFloat(tradeData.entryPrice);
-        tradeData.atr = parseFloat(tradeData.atr);
-        tradeData.exitPrice = parseFloat(tradeData.exitPrice);
-        quickResults(tradeData);
-        document.getElementById('trade-form').reset();
-        document.getElementById('entry-date-input').focus();
+        updatePanel(tradeData);
+        ajaf('POST', '/trade-form', tradeData);   
     };
 }
 
+function updatePanel(tradeData) {
+    /*
+    Joiner function that sends trade data to create table, calls to update results panel and
+    clears trade form to start new entry
+    in: object {string-date, string-price, string-direction, string-date, string-price}
+    return: nothing
+    */
+    createTableRow(tradeData);
+    tradeData.entryPrice = parseFloat(tradeData.entryPrice);
+    tradeData.atr = parseFloat(tradeData.atr);
+    tradeData.exitPrice = parseFloat(tradeData.exitPrice);
+    console.log('updatePanel check');
+    quickResults(tradeData);
+    document.getElementById('trade-form').reset();
+    document.getElementById('entry-date-input').focus();
+}
+
 function instructionsBtn() {
+    /*
+    button that pops up instructions on how to use backtester
+    in = nothing
+    return: nothing
+    effect: pop up new hmtl
+    */
     let instrWindow;
     const features = 'width=400, height=400, top=100';
     instrWindow = window.open('/instructions.html', 'instrWindow', features);
 }
 
 function resultsBtn() {
+    /*
+    button function to pop up confirmation to direct to results page
+    in: nothing
+    return: nothing
+    */
     const gotoResults = window.confirm('Finish test and go to results page?\n' +
     'Please ensure all test data is input and test is finished before continuing');
     if(gotoResults) {
@@ -115,6 +157,10 @@ function resultsBtn() {
 }
 
 function endClearSubmitBtn() {
+    /*
+    button function that pops up a confirmation before finishing current
+    test and restarting a new one
+    */
     const endTest = window.confirm('Please ensure all test data is input.\n' +
     'Finish test and reset form?');
     if(endTest) {
@@ -123,6 +169,11 @@ function endClearSubmitBtn() {
 }
 
 function validateDates(inDate) {
+    /*
+    Validates if entered date is correct
+    in: string-date 'ddmmyyyy'
+    return: bool-error?
+    */
     let err = false;
     let year = parseFloat(inDate.slice(0,4));
     let month = parseFloat(inDate.slice(4,6));
@@ -131,16 +182,21 @@ function validateDates(inDate) {
     if(year < 1900 || year > 2023) { err = true};
     if(month <= 0 || month > 12) {err = true};
     if(day <= 0 || day > 31) {err = true};
-    console.log(inDate + ' validateDates');
+    //console.log(inDate + ' validateDates');
     return err;
 }
 
 function validatePrices(inPrice) {
+    /*
+    Validates if entered price is correct
+    in: string-floating point number 'xxx.xxx'
+    return: bool-error?
+    */
     let correctForm = [false, false, false];
     let re1 = /\d.\d\d\d\d\d/;
     let re2 = /\d\d\d.\d\d\d/;
     let re3 = /\d\d.\d\d\d/;
-    console.log(typeof(inPrice));
+    //console.log(typeof(inPrice));
     if(re1.test(inPrice)) {
         correctForm[0] = true;
     }
@@ -155,6 +211,11 @@ function validatePrices(inPrice) {
 }
 
 function validatePair(inPair) {
+    /*
+    Validates if entered pair name is correct
+    in: string-pair name 'xxxxxx'
+    return: bool-error?
+    */
     const pairs = ['usd', 'gbp', 'chf', 'eur', 'jpy', 'aud', 'cad', 'nzd'];
     const base = inPair.slice(0,3);
     const quote = inPair.slice(3,6);
@@ -163,6 +224,11 @@ function validatePair(inPair) {
 };
 
 function validateMeta(mData) {
+    /*
+    Joiner meta form validation (entry/exit dates, pair name)
+    in: object-metadata {...key: str}
+    return: bool-error?
+    */
     let err = false;
     if(validatePair(mData.pairName)) {
         err = true;
@@ -177,6 +243,11 @@ function validateMeta(mData) {
 }
 
 function validateTrade(tData) {
+    /*
+    Joiner trade form validation (entry/exit dates/prices, atr)
+    in: object-tradedata
+    return: bool-error?
+    */
     let err = false;
     if(validateDates(tData.entryDate)) {
         err = true;
@@ -197,6 +268,12 @@ function validateTrade(tData) {
 }
 
 function createTableRow(tradeData) {
+    /*
+    Takes trade data and creates new row in the bottom backtester table
+    in: object-tradeData
+    return: nothing
+    effect: new line added to bottom table with last trade data input
+    */
     const table = document.getElementById('trade-table');
     let rowNum = table.rows.length;
     let row = table.insertRow(1);
@@ -224,6 +301,11 @@ function createTableRow(tradeData) {
 }
 
 function sltp(tradeData) {
+    /*
+    Takes trade data and calculates stop-loss and take-profit
+    in: object-tradeData {entryPrice: float, longShort: str, atr: float}
+    return: array [float stop-loss, float take-profit]
+    */
     let sl, tp;
     if(tradeData.longShort == 'long') {
         sl = tradeData.entryPrice - (tradeData.atr * 1.5);
@@ -232,10 +314,15 @@ function sltp(tradeData) {
         sl = tradeData.entryPrice + (tradeData.atr * 1.5);
         tp = tradeData.entryPrice - tradeData.atr;
     }
-    return [sl, tp];
+    return [roundTo(sl, 5), roundTo(tp, 5)];
 }
 
 function populateSltp() {
+    /*
+    Changes trade data to floats and passes it to sltp and put it on the DOM
+    in: nothing
+    return: nothing
+    */
     console.log('populateSlTp test');
     const tradeData = {
         entryPrice : document.getElementById('entry-price-input').value,
@@ -252,37 +339,46 @@ function populateSltp() {
     }
 }
 
+//should separate the calculations from the placing them on the DOM
 function quickResults(tradeData) {
-    let currAccount = parseFloat(document.getElementById('hidden-account').value);
+    /*
+    Takes in tradeData and calculates quick resulsts (current account value, max drawdown).
+    Puts calculated figures in DOM
+    in: object-tradeData {entryDate: str, entryPrice: str longShort: str, atr: str, 
+        exitDate: str, exitPrice: str}
+    return: nothing
+    */
+    console.log('inside quickResults');
+    let currAccount = parseFloat(document.getElementById('profit-span').innerHTML);
     let currDrawdown = parseFloat(document.getElementById('hidden-drawdown').value);
-    let maxDrawdown = parseFloat(document.getElementById('drawdown-span').innerHTML)
-    const [sl, tp] = sltp(tradeData);
-    let riskPerTrade = currAccount * 0.01;
+    let maxDrawdown = parseFloat(document.getElementById('drawdown-span').innerHTML);
+    const rawSl = tradeData.atr * 1.5;
     let outcome;
     if(tradeData.longShort == 'long') {
         outcome = tradeData.exitPrice - tradeData.entryPrice;
     } else {
         outcome = tradeData.entryPrice - tradeData.exitPrice;
     }
-    let profit = outcome > 0 ? true : false;
-    let toPerc = Math.abs(outcome) / sl;
-    console.log(profit);
-    if(profit) {
-        currAccount = currAccount + toPerc;
-        console.log([currAccount, currDrawdown]);
-    } else {
-        currAccount = currAccount - toPerc;
-        currDrawdown = currDrawdown + toPerc;
-        console.log([currAccount, currDrawdown]);
-        if(currDrawdown > maxDrawdown) {
-            maxDrawdown = currDrawdown; //everything is working but the profit/drawdown quick results are not renewing
+    let toPerc = outcome / rawSl;
+    currAccount = currAccount + toPerc;
+    document.getElementById('profit-span').innerHTML = roundTo(currAccount,2);
+    if(currAccount < 100) {
+        currDrawdown = -(roundTo(100 - currAccount,2));
+        document.getElementById('hidden-drawdown').value = currDrawdown;
+        if(currDrawdown < maxDrawdown) {
+            maxDrawdown = roundTo(currDrawdown,2);
+            document.getElementById('drawdown-span').innerHTML = roundTo(currDrawdown,2);
         }
     }
-    
+}
 
-    console.log('account');
-    console.log(tradeData.entryPrice);
-    console.log(currDrawdown);
-    console.log(riskPerTrade);
-    console.log(typeof(tradeData.entryPrice));
+function roundTo(number, decimalPlaces) {
+    //There is no round function for decimal places in js so I used a function
+    //from a medium article I found
+    const factorOfTen = Math.pow(10, decimalPlaces);
+    return Math.round(number * factorOfTen) / factorOfTen;
+}
+
+module.exports {
+    validatePrices
 }
