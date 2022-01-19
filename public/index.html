@@ -25,47 +25,41 @@
 
                             <div id="meta-meta">
 
-                                <label for="pair-name">pair name:</label>
+                                <div id="meta-title">Test MetaData</div>
+
+                                <label id="pair-name-label">pair name:</label>
                                 <input type="text" id="pair-name-input" placeholder="XXXXXX" size="6" maxlength="6">
 
-                                <label for="period-start-date-label">start:</label>
+                                <div id="period-title">Period</div>
+
+                                <label id="period-start-date-label">start:</label>
                                 <input type="text" id="period-start-date-input" placeholder="yyyymmdd" size="8" maxsize="8">
 
-                                <label for="period-end-date-label">end:</label>
+                                <label id="period-end-date-label">end:</label>
                                 <input type="text" id="period-end-date-input" placeholder="yyyymmdd" size="8" maxsize="8">
                             </div>
                             
                             <div id="meta-indis">
 
-                                <div id="entry-block">
-                                    <label for="">Entry</label>
+                                    <label id="entry-label">Entry</label>
                                     <input type="text" id="entry-indi-input" placeholder="entry-indi">
                                     <input type="text" id="entry-params-input" placeholder="entry-params">
-                                </div>
 
-                                <div id="baseline-block">
-                                    <label for="">Baseline</label>
+                                    <label id="baseline-label">Baseline</label>
                                     <input type="text" id="baseline-indi-input" placeholder="baseline-indi">
                                     <input type="text" id="baseline-params-input" placeholder="baseline-params">
-                                </div>
 
-                                <div id="exit-block">
-                                    <label for="">Exit</label>
+                                    <label id="exit-label">Exit</label>
                                     <input type="text" id="exit-indi-input" placeholder="exit-indi">
                                     <input type="text" id="exit-params-input" placeholder="exit-params">
-                                </div>
 
-                                <div id="volume-block">
-                                    <label for="">Volume</label>
+                                    <label id="volume-label">Volume</label>
                                     <input type="text" id="volume-indi-input" placeholder="volume-indi">
                                     <input type="text" id="volume-params-input" placeholder="volume-params">
-                                </div>
                                 
-                                <div id="c2 block">
-                                    <label for="">Confirmation 2</label>
+                                    <label id="c2-label">Confirmation 2</label>
                                     <input type="text" id="c2-indi-input" placeholder="c2-indi">
                                     <input type="text" id="c2-params-input" placeholder="c2-params">
-                                </div>
 
                             </div>
 
@@ -78,16 +72,15 @@
                 </div>
 
                 <div id="quick-results-container">
-
+                    <h3 class="quick-results-subtitle" id="quick-results-account-label">Account %</h3>
                     <div id="quick-res-profit">
-                        <h3>Account</h3>
-                        <span id="profit-span">
+                        <span id="profit-span" class="quick-results-span">
                             100.0
                         </span>
                     </div>
+                    <h3 class="quick-results-subtitle" id="quick-results-drawdown-label">Max Drawdown %</h3>
                     <div id="quick-res-drawdown">
-                        <h3>Max Drawdown</h3>
-                        <span id="drawdown-span">
+                        <span id="drawdown-span" class="quick-results-span">
                             0.0
                         </span>
                     </div>
@@ -102,25 +95,30 @@
                     <fieldset id="trade-input-field-lock" disabled="disabled">
                         
                         <div id="trade-data-block">
-                            <label for="">Entry Date</label>
+
+                            <div id="trade-input-title">Trade input data</div>
+
+                            <div id="entry-title">Trade entry</div>
+                            <label id="entry-date-label">Date:</label>
                             <input type="text" id="entry-date-input" placeholder="yyyymmdd" size="8" maxsize="8">
 
-                            <label for="">Entry price</label>
+                            <label id="entry-price-label">Price:</label>
                             <input type="text" id="entry-price-input" placeholder="0.00000">
 
-                            <label for="">Long/Short</label>
+                            <label id="lors-label">Long/Short:</label>
                             <select name="" id="long-or-short-input">
                                 <option value="long">Long</option>
-                                <option value="short">Short</option>
+                                <option value="short">Short:</option>
                             </select>
 
-                            <label for="">ATR14</label>
+                            <label id="atr-label">ATR14:</label>
                             <input type="text" id="atr-input" placeholder="0.00000" onfocusout="populateSltp()">
 
-                            <label for="">Exit Date</label>
+                            <div id="exit-title">Trade exit</div>
+                            <label id="exit-date-label">Date:</label>
                             <input type="text" id="exit-date-input" placeholder="yyyymmdd" size="8" maxsize="8">
 
-                            <label for="">Exit Price</label>
+                            <label id="exit-price-label">Price:</label>
                             <input type="text" id="exit-price-input" placeholder="0.00000">
                         </div>
 
@@ -162,7 +160,7 @@
                             <th>Entry Date</th>
                             <th>Entry Price</th>
                             <th>Long/Short</th>
-                            <th>ATR</th>
+                            <th id="atr-table">ATR</th>
                             <th>Exit Date</th> <!--If yes, it autofills Exit price-->
                             <th>Exit Price</th>
                             <th>X</th>

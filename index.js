@@ -12,21 +12,36 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, "/public")));
 
 app.post('/meta-form', (req, res)=> {
-    const inData = req.body;
-    const fixedData = formatFix.formatMetaData(inData);
-    //dbquery.testing();
-    //dbquery.getPair().then(dbres=> console.log(dbres));
-    console.log(fixedData);
-    console.log('meta server check')
-    res.status(200).end();
+    const metaData = req.body;
+    const fixedData = formatFix.formatMetaData(metaData);
+    dbquery.metaToDb(fixedData)
+    .then(()=> {
+        console.log(fixedData);
+        console.log('meta server check')
+        res.status(200).end();
+    });    
 });
 
 app.post('/trade-form', (req, res)=> {
-    const inData = req.body;
-    const fixedTradeData = Object.values(inData);
-    console.log(fixedTradeData);
-    console.log('data server check')
-    res.status(200).end();
+    const tradeData = req.body;
+    const preTestId = dbquery.getPreTestId();
+    const testId = dbquery.getTestId();
+    const tradeId = dbquery.getTradeId();
+
+    Promise.all([preTestId, testId, tradeId])
+    .then(ids=> {
+        tradeData.testId = ids[1];
+        tradeData.tradeId = ids[0] < ids[1] ? 1 : (ids[2] + 1);
+        console.log([ids[0], ids[1], ids[2]]);
+        const formattedTradeData = formatFix.formatTradeData(tradeData);
+        return formattedTradeData;
+    })
+    .then((ftd)=> {
+        console.log(ftd);
+        dbquery.tradeToDb(ftd);
+        console.log('data server check')
+        res.status(200).end();
+    })
 });
 
 app.listen(PORT);

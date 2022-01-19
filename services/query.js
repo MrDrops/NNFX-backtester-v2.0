@@ -4,7 +4,7 @@ const db = require('./connection');
 async function metaToDb(metaData) {
     try {
         await db.query(
-            `INSERT INTO test_meta_data (pair_name, start_date, end_date, entry, baseline, exit, volume, c2, entry_params, bline_params, exit_params, vol_params, c2_params)
+            `INSERT INTO test_meta_data (pair_name, start_date, end_date, entry, baseline, exit_ind, volume, c2, entry_params, bline_params, exit_params, vol_params, c2_params)
             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, metaData
         );
     } catch(err) {
@@ -31,7 +31,14 @@ async function getPreTestId() {
         );
         return testId[0].test_id;
     }catch (err) {
-        console.log(err.message);
+        if(err.name == 'TypeError') {
+            console.log('no previous pre_test_id');
+            return 0;
+        } else {
+            console.log('getPreTestId, other error');
+            console.log(err.message);
+        }
+        //console.log(err.message);    
     }
 }
 
@@ -42,31 +49,56 @@ async function getTestId() {
         );
         return testId[0].test_id;
     }catch (err) {
-        console.log(err.message);
+        console.log(err.message); 
     }
 }
 
-//example
-async function getPair() {
+async function getTradeId() {
     /*
-    Fetches pair name from db
-    Return: str (6chrs)
+    Fetches last trade id from db
+    Return: int
     */
     try {
-        const result = await db.query(
-            'SELECT * FROM test_meta_data', []
+        const tradeId = await db.query(
+            'select trade_id from trades_data order by test_id desc, trade_id desc limit 1', []
         );
-        return result[0];
-    } catch(err) {
-        console.error(err);
-    };    
+        return tradeId[0].trade_id;
+    }catch (err) {
+        if(err.name == 'TypeError') {
+            console.log('no previous trade_id');
+            return 1;
+        } else {
+            console.log('getTradeId err. other error');
+            console.log(err.message);
+        }   
+    }
 };
+
+//example
+// async function getPair() {
+//     /*
+//     Fetches pair name from db
+//     Return: str (6chrs)
+//     */
+//     try {
+//         const result = await db.query(
+//             'SELECT * FROM test_meta_data', []
+//         );
+//         return result[0];
+//     } catch(err) {
+//         console.error(err);
+//     };    
+// };
 
 function testing() {
     console.log('test succesfull');
 }
 
 module.exports = {
-    getPair,
+    metaToDb,
+    tradeToDb,
+    getPreTestId,
+    getTestId,
+    getTradeId,
     testing
 }

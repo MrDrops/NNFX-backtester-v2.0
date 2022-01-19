@@ -127,8 +127,12 @@ function updatePanel(tradeData) {
     tradeData.exitPrice = parseFloat(tradeData.exitPrice);
     console.log('updatePanel check');
     quickResults(tradeData);
+    //reset sl & tp
+    document.getElementById('sl-placeholder').innerHTML = 0.0;
+    document.getElementById('tp-placeholder').innerHTML = 0.0;
     document.getElementById('trade-form').reset();
     document.getElementById('entry-date-input').focus();
+    
 }
 
 function instructionsBtn() {
@@ -171,7 +175,7 @@ function endClearSubmitBtn() {
 function validateDates(inDate) {
     /*
     Validates if entered date is correct
-    in: string-date 'ddmmyyyy'
+    in: string-date 'yyyymmdd'
     return: bool-error?
     */
     let err = false;
@@ -192,6 +196,7 @@ function validatePrices(inPrice) {
     in: string-floating point number 'xxx.xxx'
     return: bool-error?
     */
+    console.log(typeof(inPrice));
     let correctForm = [false, false, false];
     let re1 = /\d.\d\d\d\d\d/;
     let re2 = /\d\d\d.\d\d\d/;
@@ -377,8 +382,4 @@ function roundTo(number, decimalPlaces) {
     //from a medium article I found
     const factorOfTen = Math.pow(10, decimalPlaces);
     return Math.round(number * factorOfTen) / factorOfTen;
-}
-
-module.exports {
-    validatePrices
 }

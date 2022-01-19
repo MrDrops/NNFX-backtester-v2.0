@@ -1,5 +1,15 @@
 //functions to fix input format issues before sending to database
 
+function formatDate(strDate) {
+    /*
+    formats dates into mysql dateformat
+    in: str ('yyyymmdd')
+    return: str ('yyyy-mm-dd')
+    */
+    let arr = [strDate.slice(0,4), strDate.slice(4,6), strDate.slice(6)];
+    return arr.join('-');
+}
+
 function formatMetaData(metaData) {
     function valOrNull(value) {
         return value.length > 0 ? value : null;
@@ -7,23 +17,37 @@ function formatMetaData(metaData) {
 
     const fixedData = {
         pr : metaData.pairName,
-        sd : metaData.startDate,
-        ed : metaData.endDate,
+        sd : formatDate(metaData.startDate),
+        ed : formatDate(metaData.endDate),
         c1 : metaData.entryIndi,
-        c1p : metaData.entryParam,
         bl : valOrNull(metaData.blineIndi),
-        blp : valOrNull(metaData.blineParam),
         ex : valOrNull(metaData.exitIndi),
-        exp : valOrNull(metaData.exitParam),
         vol : valOrNull(metaData.volIndi),
-        vlp : valOrNull(metaData.volParam),
         c2 : valOrNull(metaData.c2Indi),
+        c1p : metaData.entryParam,
+        blp : valOrNull(metaData.blineParam),
+        exp : valOrNull(metaData.exitParam),
+        vlp : valOrNull(metaData.volParam),
         c2p : valOrNull(metaData.c2Param),
     }
-    console.log(Object.values(fixedData));
     return Object.values(fixedData);
 };
 
+function formatTradeData(tradeData) {
+    const fixedData = {
+        ti : tradeData.testId,
+        tri : tradeData.tradeId,
+        ed : formatDate(tradeData.entryDate),
+        ep : tradeData.entryPrice,
+        ls : tradeData.longShort,
+        atr : tradeData.atr,
+        exd : formatDate(tradeData.exitDate),
+        exp  : tradeData.exitPrice,
+    }
+    return Object.values(fixedData);
+}
+
 module.exports = {
-    formatMetaData
+    formatMetaData,
+    formatTradeData
 }
