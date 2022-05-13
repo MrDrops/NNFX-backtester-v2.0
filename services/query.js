@@ -16,8 +16,8 @@ async function metaToDb(metaData) {
 async function tradeToDb(tradeData) {
     try {
         await db.query(
-            `INSERT INTO trades_data (test_id, trade_id, entry_date, entry_price, direction, atr, exit_date, exit_price)
-            VALUES (?,?,?,?,?,?,?,?)`, tradeData
+            `INSERT INTO trades_data (test_id, trade_id, entry_date, entry_price, direction, atr, hit_tp, exit_date, exit_price)
+            VALUES (?,?,?,?,?,?,?,?,?)`, tradeData
         );
     } catch(err) {
 
@@ -74,24 +74,30 @@ async function getTradeId() {
     }
 };
 
-//example
-// async function getPair() {
-//     /*
-//     Fetches pair name from db
-//     Return: str (6chrs)
-//     */
-//     try {
-//         const result = await db.query(
-//             'SELECT * FROM test_meta_data', []
-//         );
-//         return result[0];
-//     } catch(err) {
-//         console.error(err);
-//     };    
-// };
+async function getAvailableTests() {
+    /*
+    Fetches all current available tests
+    Return: 
+    */
+    try {
+        const result = await db.query(
+            'SELECT test_id, pair_name, start_date, end_date FROM test_meta_data', []
+        );
+        return result;
+    } catch(err) {
+        console.error(err);
+    };    
+};
 
-function testing() {
-    console.log('test succesfull');
+async function testToanalize(testId) {
+    try {
+        const result = await db.query(
+            `SELECT * FROM trades_data WHERE test_id = VALUES (?)`, testId
+        );
+        return result;
+    } catch(err) {
+        console.log(err);
+    }
 }
 
 module.exports = {
@@ -100,5 +106,6 @@ module.exports = {
     getPreTestId,
     getTestId,
     getTradeId,
-    testing
+    getAvailableTests,
+    testToanalize
 }

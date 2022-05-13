@@ -99,6 +99,7 @@ function submitTradeBtn() {
         entryPrice: document.getElementById('entry-price-input').value,
         longShort: document.getElementById('long-or-short-input').value,
         atr: document.getElementById('atr-input').value,
+        hitTP: document.getElementById('hit-tp-input').value,
         exitDate: document.getElementById('exit-date-input').value,
         exitPrice: document.getElementById('exit-price-input').value,
     };

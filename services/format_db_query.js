@@ -41,13 +41,28 @@ function formatTradeData(tradeData) {
         ep : tradeData.entryPrice,
         ls : tradeData.longShort,
         atr : tradeData.atr,
+        htp : tradeData.hitTP,
         exd : formatDate(tradeData.exitDate),
         exp  : tradeData.exitPrice,
     }
     return Object.values(fixedData);
 }
 
+function formatTradeList(allTrades) {
+    const tradeArr = [];
+    for (let trade of allTrades) {
+        let start = new Date(trade.start_date).toISOString().replace(/T.*/,'').split('-').reverse().join('/');
+        let end = new Date(trade.end_date).toISOString().replace(/T.*/,'').split('-').reverse().join('/');
+        trade.start_date = start;
+        trade.end_date = end;
+        let strTrade = Object.values(trade).join(', ');
+        tradeArr.push(strTrade);
+    }
+    return tradeArr;
+}
+
 module.exports = {
     formatMetaData,
-    formatTradeData
+    formatTradeData,
+    formatTradeList
 }

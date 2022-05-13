@@ -11,6 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, "/public")));
 
+//Gather and store test meta data from input form to db
 app.post('/meta-form', (req, res)=> {
     const metaData = req.body;
     const fixedData = formatFix.formatMetaData(metaData);
@@ -22,6 +23,7 @@ app.post('/meta-form', (req, res)=> {
     });    
 });
 
+//Gather and store trade data from input form to db
 app.post('/trade-form', (req, res)=> {
     const tradeData = req.body;
     const preTestId = dbquery.getPreTestId();
@@ -43,5 +45,35 @@ app.post('/trade-form', (req, res)=> {
         res.status(200).end();
     })
 });
+
+/*
+        Below are functions for the results page
+*/
+
+app.get('/available-tests', (req, res)=> {
+    //call to db to retrieve test data
+    dbquery.getAvailableTests()
+    .then(response=> response)
+    .then(availTests=> {
+        const strTest = formatFix.formatTradeList(availTests);
+        //organize tests in a nice form before sending to front
+        //console.log(availTests[0]);
+        res.json(strTest);
+    })
+    //sort data in a presentable form
+    //send to fetch request from result page
+})
+
+app.post('/trade-data', (req, res)=> {
+    const testIdReq = req.body;
+    console.log('body: ' + testIdReq);
+    // dbquery.testToanalize(testIdReq)
+    // .then(response=> {
+    //     res.json(response);
+    // })
+    //get data from db
+    //send data to analysis
+    //send analyzed data to results.html
+})
 
 app.listen(PORT);

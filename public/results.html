@@ -1,8 +1,4 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
     <head>
         <meta charset="utf-8">
@@ -10,11 +6,30 @@
         <title>Results</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="#">
+        <link rel="stylesheet" href="results_style.css">
     </head>
-    <body>
-        This is going to be the results page
+    <body onload="selectMenu()">
+        <h1>Test Results</h1>
+        <div>
+            <h4>Please choose a test to visualize:</h4>
+            <label id="test-dropdown">Test</label>
+            <select name="" id="test-option-input">
+                <option value="0">Test</option>
+            </select>
+        </div>
+        <br>
+        <div id="provisional">
+            <button onclick="viewResultsBtn()">View Results</button>
+        </div>
+
+        <div id="table-data-display">
+
+        </div>
+
+        <div id="graph-data-display">
+
+        </div>
         
-        <script src="#" async defer></script>
+        <script src="results_script.js" async defer></script>
     </body>
 </html>
